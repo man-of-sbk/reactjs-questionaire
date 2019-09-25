@@ -1,0 +1,123 @@
+html,
+body {
+  margin: 0;
+  background: #ede7f6;
+  font-family: arial, sans-serif;
+  color: #424242;
+  padding: 0 10px 0 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+input {
+  outline: none;
+}
+
+.form-group {
+  margin-bottom: 60px;
+}
+
+.form-group .form-label {
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: 25px;
+  display: block;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+}
+
+.d-block {
+  display: block;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.radio-input-container {
+  margin-bottom: 10px;
+
+  display: block;
+  position: relative;
+  cursor: pointer;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.radio-input-container .radio-input-content {
+  margin-left: 28px;
+}
+
+.radio-input-container input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radio-input-container .radio-input-demonstrator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+.radio-input-container:hover input[type="radio"] ~ .radio-input-demonstrator {
+  background-color: #ccc;
+}
+
+.radio-input-container input[type="radio"]:checked ~ .radio-input-demonstrator {
+  background-color: #2196f3;
+}
+
+.radio-input-container .radio-input-demonstrator:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.radio-input-container
+  input[type="radio"]:checked
+  ~ .radio-input-demonstrator:after {
+  display: block;
+}
+
+.radio-input-container .radio-input-demonstrator:after {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  background: white;
+  top: 50%;
+  left: 50%;
+
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}

@@ -82,5 +82,32 @@ export const rawQuestionData = [
         content: "4"
       }
     ]
+  },
+  {
+    label: "Which in following answer is core values of Framgia:",
+    name: "framgia-core-value",
+    type: "checkbox",
+    answers: [
+      {
+        value: "go fast",
+        content: "Go Fast"
+      },
+      {
+        value: "go slow",
+        content: "Go Slow"
+      },
+      {
+        value: "be a team",
+        content: "Be A Team"
+      },
+      {
+        value: "think outside of the box",
+        content: "Think Outside Of The Box"
+      },
+      {
+        value: "be positive",
+        content: "Be Positive"
+      }
+    ]
   }
 ];

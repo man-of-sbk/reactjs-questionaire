@@ -1,21 +1,64 @@
 import React from "react";
 
-import RadioQues from "./../components/inputs/RadioQues";
-import TextQues from "./../components/inputs/TextQues";
-import NumberQues from "../components/inputs/NumberQues";
-import SelectOptionQuest from "./../components/inputs/SelectOptionQues";
+import RadioQues from "./../components/inputs/RadioQuestion/index";
+import TextQues from "./../components/inputs/TextQuestion/index";
+import NumberQues from "../components/inputs/NumberQuestion/index";
+import SelectOptionQuest from "./../components/inputs/SelectOptionQuestion/index";
+import CheckBoxQues from "./../components/inputs/CheckBoxQuestion/index";
 
-export const inputTypes = {
-  text: (inputData, index) => (
-    <TextQues {...inputData} index={index + 1} key={index} />
+export const inputTypes = (inputData, index, onInputChange, value, error) => ({
+  // *** without returning components from a function, we're actually calling their constructor or just simply
+  // ***** calling them, rendering them just as when we pass an event to a DOM or a component with
+  // ***** a pair of brackets following behind which means, we're calling the event, not passing it's reference to
+  // ***** the DOM/component.
+  text: () => (
+    <TextQues
+      key={index}
+      {...inputData}
+      index={index + 1}
+      onChange={onInputChange}
+      value={value}
+      error={error}
+    />
   ),
-  number: (inputData, index) => (
-    <NumberQues {...inputData} index={index + 1} key={index} />
+  number: () => (
+    <NumberQues
+      key={index}
+      {...inputData}
+      index={index + 1}
+      onChange={onInputChange}
+      value={value}
+      error={error}
+    />
   ),
-  radio: (inputData, index) => (
-    <RadioQues {...inputData} index={index + 1} key={index} />
+  radio: () => (
+    <RadioQues
+      key={index}
+      {...inputData}
+      index={index + 1}
+      onChange={onInputChange}
+      value={value}
+      error={error}
+    />
   ),
-  select: (inputData, index) => (
-    <SelectOptionQuest {...inputData} index={index + 1} key={index} />
+  select: () => (
+    <SelectOptionQuest
+      key={index}
+      {...inputData}
+      index={index + 1}
+      onChange={onInputChange}
+      value={value}
+      error={error}
+    />
+  ),
+  checkbox: () => (
+    <CheckBoxQues
+      key={index}
+      {...inputData}
+      index={index + 1}
+      onChange={onInputChange}
+      value={value}
+      error={error}
+    />
   )
-};
+});

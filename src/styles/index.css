@@ -72,7 +72,8 @@ input {
   margin-left: 28px;
 }
 
-.radio-input-container input[type="radio"] {
+.radio-input-container input[type="radio"],
+.radio-input-container input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -88,11 +89,17 @@ input {
   border-radius: 50%;
 }
 
-.radio-input-container:hover input[type="radio"] ~ .radio-input-demonstrator {
+.radio-input-container:hover input[type="radio"] ~ .radio-input-demonstrator,
+.radio-input-container:hover
+  input[type="checkbox"]
+  ~ .radio-input-demonstrator {
   background-color: #ccc;
 }
 
-.radio-input-container input[type="radio"]:checked ~ .radio-input-demonstrator {
+.radio-input-container input[type="radio"]:checked ~ .radio-input-demonstrator,
+.radio-input-container
+  input[type="checkbox"]:checked
+  ~ .radio-input-demonstrator {
   background-color: #2196f3;
 }
 
@@ -104,6 +111,9 @@ input {
 
 .radio-input-container
   input[type="radio"]:checked
+  ~ .radio-input-demonstrator:after,
+.radio-input-container
+  input[type="checkbox"]:checked
   ~ .radio-input-demonstrator:after {
   display: block;
 }
@@ -120,4 +130,14 @@ input {
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+}
+
+.checkbox-container .radio-input-demonstrator {
+  border-radius: 0;
+}
+
+.input-error {
+  color: #db4437;
+  display: block;
+  margin-top: 20px;
 }

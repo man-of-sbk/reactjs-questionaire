@@ -1,10 +1,6 @@
-import React from "react";
-
 import styled from "styled-components";
 
-import InputsContainer from "./InputsContainer";
-
-const MainContainer = styled.div`
+export const MainContainer = styled.div`
   position: relative;
   max-width: 850px;
   background: white;
@@ -26,7 +22,7 @@ const MainContainer = styled.div`
   }
 `;
 
-const MainContainerTitle = styled.h2`
+export const MainContainerTitle = styled.h2`
   color: #424242;
   font-size: 35px;
   text-transform: capitalize;
@@ -34,21 +30,7 @@ const MainContainerTitle = styled.h2`
   margin-bottom: 30px;
 `;
 
-const MainContainerSubTitle = styled.h3`
+export const MainContainerSubTitle = styled.h3`
   font-size: 15px;
   font-weight: normal;
 `;
-
-const QuestionaireContainer = () => {
-  return (
-    <MainContainer>
-      <MainContainerTitle>Framgia survey form</MainContainerTitle>
-      <MainContainerSubTitle>
-        After submitting this form, you will be a framgia member
-      </MainContainerSubTitle>
-      <InputsContainer />
-    </MainContainer>
-  );
-};
-
-export default QuestionaireContainer;

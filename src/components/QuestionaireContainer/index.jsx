@@ -1,5 +1,8 @@
+/* eslint-disable react/require-default-props */
 import React, { Component } from "react";
 
+import { PropTypes } from "prop-types";
+import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import { rawQuestionData } from "../../services/rawQuestionData";
 import {
@@ -7,6 +10,12 @@ import {
   MainContainerTitle,
   MainContainerSubTitle
 } from "./style";
+
+import {
+  INIT_FETCHED_QUESTION_DATA,
+  UPDATE_INPUT_VALUE_DATA,
+  UPDATE_FETCHING_QUESTION_DATA_DONE
+} from "../../actions/surveyQuestion";
 
 import InputsContainer from "../InputsContainer/index";
 import FormResponse from "../FormResponse/index";
@@ -22,65 +31,32 @@ class QuestionaireContainer extends Component {
     };
   }
 
-  setFetchedQuestionData = (newVal, callback) => {
-    this.setState(
-      {
-        fetchedQuestionData: newVal
-      },
-      callback
-    );
-  };
-
-  setFetchedDataIsLoaded = (newVal, callback) => {
-    this.setState(
-      {
-        fetchedDataIsLoaded: newVal
-      },
-      callback
-    );
-  };
-
-  setInputVals = (newVal, callback) => {
-    this.setState(
-      {
-        inputVals: newVal
-      },
-      callback
-    );
-  };
-
   fetchQuestionData = () => {
-    const { fetchedDataIsLoaded } = this.state;
+    if (!rawQuestionData) return;
 
-    if (rawQuestionData && !fetchedDataIsLoaded) {
-      this.setState(
-        {
-          fetchedQuestionData: rawQuestionData
-        },
-        () => {
-          const newInputValsState = {};
+    const {
+      dispatchUpdateFetchedQuestionData,
+      dispatchUpdateInputValsData,
+      dispatchUpdateFetchingQuestionDataDone
+    } = this.props;
+    const newInputValsData = {};
 
-          this.state.fetchedQuestionData.forEach(questionData => {
-            newInputValsState[questionData.name] = {
-              label: questionData.label,
-              type: questionData.type,
-              value: questionData.type === "checkbox" ? [] : "",
-              error: undefined
-            };
-          });
+    dispatchUpdateFetchedQuestionData(rawQuestionData);
 
-          this.setInputVals(newInputValsState);
-          this.setFetchedDataIsLoaded(true);
-        }
-      );
-    }
-  };
+    rawQuestionData.forEach((questionData) => {
+      newInputValsData[questionData.name] = {
+        label: questionData.label,
+        type: questionData.type,
+        value: questionData.type === "checkbox" ? [] : "",
+        error: ""
+      };
+    });
+
+    dispatchUpdateInputValsData(newInputValsData);
+    dispatchUpdateFetchingQuestionDataDone();
+  }
 
   componentDidMount = () => {
-    // if (localStorage.getItem("inputVals") !== null) {
-    //   localStorage.removeItem("inputVals");
-    // }
-
     this.fetchQuestionData();
   };
 
@@ -96,7 +72,7 @@ class QuestionaireContainer extends Component {
         <Route
           exact
           path="/"
-          render={reactRouteProps => (
+          render={(reactRouteProps) => (
             <InputsContainer
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...reactRouteProps}
@@ -113,4 +89,26 @@ class QuestionaireContainer extends Component {
   }
 }
 
-export default QuestionaireContainer;
+QuestionaireContainer.propTypes = {
+  dispatchUpdateFetchedQuestionData: PropTypes.func,
+  dispatchUpdateInputValsData: PropTypes.func,
+  dispatchUpdateFetchingQuestionDataDone: PropTypes.func
+};
+
+const mapStateToProps = (state) => ({
+  fetchedQuestionDataState: state.surveyQuestion.fetchedQuestionData
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatchUpdateFetchedQuestionData: (fetchedQuestionData) => {
+    dispatch(INIT_FETCHED_QUESTION_DATA(fetchedQuestionData));
+  },
+  dispatchUpdateInputValsData: (inputValsArr) => {
+    dispatch(UPDATE_INPUT_VALUE_DATA(inputValsArr));
+  },
+  dispatchUpdateFetchingQuestionDataDone: () => {
+    dispatch(UPDATE_FETCHING_QUESTION_DATA_DONE());
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionaireContainer);

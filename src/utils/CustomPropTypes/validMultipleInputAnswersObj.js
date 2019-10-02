@@ -1,14 +1,15 @@
+// eslint-disable-next-line import/prefer-default-export
 export const validMultipleInputAnswersObj = (
   allPassedProps,
   currentValidatedPropName,
   currentComponentName
 ) => {
   const currentValidatedProp = allPassedProps[currentValidatedPropName];
-  const arrOfObj = arr => !arr.some(ele => typeof ele !== "object");
+  const arrOfObj = (arr) => !arr.some((ele) => typeof ele !== "object");
 
   if (
-    currentValidatedProp === undefined ||
-    !Array.isArray(currentValidatedProp)
+    currentValidatedProp === undefined
+    || !Array.isArray(currentValidatedProp)
   ) {
     throw new Error(
       `The prop "${currentValidatedPropName}" is marked as required as well as to be an array, but its value is "${currentValidatedProp}" (in "${currentComponentName}" component).`
@@ -21,7 +22,7 @@ export const validMultipleInputAnswersObj = (
     );
   }
 
-  currentValidatedProp.forEach(answer => {
+  currentValidatedProp.forEach((answer) => {
     if (answer.value === undefined || answer.content === undefined) {
       throw new Error(
         `each property of "${currentValidatedPropName}" prop should contain both "value" as well as "content" properties (in "${currentComponentName}" component).`

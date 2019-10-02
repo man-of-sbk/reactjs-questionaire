@@ -6,7 +6,7 @@ import QuestionaireContainer from "../QuestionaireContainer/index";
 
 function App() {
   return (
-    <React.Fragment>
+    <>
       <TopHalfBackground />
       <QuestionaireContainer />
       <FooterText>
@@ -19,7 +19,7 @@ function App() {
           alt="framgia-logo"
         />
       </FooterText>
-    </React.Fragment>
+    </>
   );
 }
 

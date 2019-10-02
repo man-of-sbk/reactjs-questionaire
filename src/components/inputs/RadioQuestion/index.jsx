@@ -1,5 +1,9 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable arrow-body-style */
+/* eslint-disable react/require-default-props */
 import React from "react";
 
+import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import { validMultipleInputAnswersObj } from "../../../utils/CustomPropTypes/validMultipleInputAnswersObj";
 
@@ -10,19 +14,24 @@ const RadioQues = ({
   label,
   index,
   onChange,
-  value,
-  error
+  inputValsState
 }) => {
+  const { error } = inputValsState[name];
+
   return (
     <div className="form-group">
-      <label className="form-label">
-        {index && `${index}.`} {label}
+      <label className="form-label" htmlFor={name}>
+        {index && `${index}.`}
+        {label}
       </label>
-      {answers &&
-        Array.isArray(answers) &&
-        answers.map((answer, index) => (
-          <label key={index} className="radio-input-container">
-            <span className="capitalize radio-input-content">
+      {answers
+        && Array.isArray(answers)
+        && answers.map((answer, answerIndex) => (
+          // eslint-disable-next-line jsx-a11y/label-has-associated-control
+          <label key={answerIndex} className="radio-input-container">
+            <span
+              className="capitalize radio-input-content"
+            >
               {answer.content}
             </span>
             <input
@@ -31,9 +40,8 @@ const RadioQues = ({
               name={name}
               value={answer.value}
               onChange={onChange}
-              checked={answer.value === value}
             />
-            <span className="radio-input-demonstrator"></span>
+            <span className="radio-input-demonstrator" />
           </label>
         ))}
       <span className="input-error">{error !== undefined && error}</span>
@@ -43,9 +51,17 @@ const RadioQues = ({
 
 RadioQues.propTypes = {
   className: PropTypes.string,
+  index: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  label: PropTypes.string,
+  onChange: PropTypes.func,
   name: PropTypes.string.isRequired,
   answers: validMultipleInputAnswersObj,
-  label: PropTypes.string.isRequired
+  // eslint-disable-next-line react/forbid-prop-types
+  inputValsState: PropTypes.object
 };
 
-export default RadioQues;
+const mapStateToProps = (state) => ({
+  inputValsState: state.surveyQuestion.inputVals
+});
+
+export default connect(mapStateToProps)(RadioQues);

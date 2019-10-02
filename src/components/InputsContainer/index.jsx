@@ -1,102 +1,90 @@
+/* eslint-disable no-undef-init */
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/require-default-props */
 import React from "react";
+import { PropTypes } from "prop-types";
+import { connect } from "react-redux";
+
 
 import { inputTypes } from "../../constants/inputTypes";
 import { InputContainerSection, SubmitBtn, BotWarningLabel } from "./style";
+import { UPDATE_INPUT_VALUE_DATA } from "../../actions/surveyQuestion";
 
 const InputsContainer = ({
-  inputVals,
-  setInputVals,
-  fetchedQuestionData,
-  fetchedDataIsLoaded,
+  fetchingQuestionDataDoneState,
+  dispatchUpdateInputData,
+  fetchedQuestionDataState,
+  inputValsState,
+  // eslint-disable-next-line react/prop-types
   history
 }) => {
   const validateInputVals = (inputValue, inputType) => {
-    let value = inputValue;
-    const type = inputType;
-    let error = "";
+    let error = undefined;
 
-    if (type === "number" && parseInt(value) < 0) {
-      value = 0;
+    if (inputType === "number" && parseInt(inputValue) < 0) {
       error = "Invalid input value";
-    } else if (value.toString().trim() === "") {
+    } else if (inputValue.toString().trim() === "") {
       error = "Above input is required";
-    } else {
-      error = undefined;
     }
 
-    // *** res is an object satisfying the format of "inputVals" state
-    return {
-      value,
-      type,
-      error
-    };
+    return error;
   };
 
-  const onInputChange = e => {
-    const { name, type } = e.target;
+  const onInputChange = (e) => {
+    const { name, type, checked } = e.target;
     const { value } = e.target;
-    let currentCheckboxInputVal = [];
 
-    const newInputVals = { ...inputVals };
-    let newInputValOfThisInput = { ...newInputVals[name] };
+    const inputValsStateClone = { ...inputValsState };
+    const inputValsStateAtNameClone = { ...inputValsState[name] };
+
+    inputValsStateAtNameClone.error = validateInputVals(value, type);
 
     if (type === "checkbox") {
-      currentCheckboxInputVal = newInputValOfThisInput.value;
-
-      if (currentCheckboxInputVal.indexOf(value) > -1) {
-        newInputValOfThisInput.value = currentCheckboxInputVal.filter(
-          checkBoxVal => checkBoxVal !== value
-        );
+      if (checked) {
+        inputValsStateAtNameClone.value.push(value);
       } else {
-        newInputValOfThisInput.value.push(value);
+        inputValsStateAtNameClone.value = inputValsStateAtNameClone.value.filter((checkboxValue) => checkboxValue !== value);
       }
+    } else {
+      inputValsStateAtNameClone.value = value;
     }
 
-    newInputValOfThisInput = {
-      ...newInputValOfThisInput,
-      ...validateInputVals(
-        type === "checkbox" ? newInputValOfThisInput.value : value,
-        type
-      )
-    };
+    inputValsStateClone[name] = inputValsStateAtNameClone;
 
-    newInputVals[name] = newInputValOfThisInput;
-
-    setInputVals(newInputVals);
+    dispatchUpdateInputData(inputValsStateClone);
   };
 
   const onSubmit = () => {
-    const newInputVals = { ...inputVals };
-    let newInputValsAtName = {};
-    let hasError = false;
+    const inputValsStateClone = { ...inputValsState };
 
-    Object.keys(newInputVals).forEach(inputName => {
-      newInputValsAtName = newInputVals[inputName];
+    let hasErr = false;
+    // const inputValsStateAtNameClone = {};
 
-      newInputValsAtName = {
-        ...newInputValsAtName,
-        ...validateInputVals(newInputValsAtName.value, newInputValsAtName.type)
-      };
+    Object.keys(inputValsStateClone).forEach((inputName) => {
+      const currentInputVals = inputValsState[inputName];
+      const inputValidationRes = validateInputVals(
+        currentInputVals.value,
+        currentInputVals.type
+      );
+      inputValsStateClone[inputName] = { ...currentInputVals };
 
-      if (!hasError && newInputValsAtName.error !== undefined) {
-        hasError = true;
+      inputValsStateClone[inputName].error = inputValidationRes;
+
+      if (inputValidationRes !== undefined && !hasErr) {
+        hasErr = true;
       }
-
-      newInputVals[inputName] = newInputValsAtName;
     });
 
-    if (hasError) {
-      // *** add new errors propery for invalid input value
-      setInputVals(newInputVals);
-      return;
-    }
+    dispatchUpdateInputData(inputValsStateClone);
 
-    localStorage.setItem("inputVals", JSON.stringify(newInputVals));
+    if (hasErr) return;
 
+    localStorage.setItem("inputVals", JSON.stringify(inputValsStateClone));
+    // eslint-disable-next-line react/prop-types
     history.push("/formResponse");
   };
 
-  if (!fetchedDataIsLoaded) {
+  if (!fetchingQuestionDataDoneState) {
     return (
       <InputContainerSection textAlign="center">
         <img
@@ -111,15 +99,11 @@ const InputsContainer = ({
 
   return (
     <InputContainerSection>
-      {fetchedQuestionData.map((questionData, index) =>
-        inputTypes(
-          questionData,
-          index,
-          onInputChange,
-          inputVals[questionData.name].value,
-          inputVals[questionData.name].error
-        )[questionData.type]()
-      )}
+      {fetchedQuestionDataState.map((questionData, index) => inputTypes(
+        questionData,
+        index,
+        onInputChange,
+      )[questionData.type]())}
       <SubmitBtn onClick={onSubmit}>Submit</SubmitBtn>
       <BotWarningLabel>
         Never submit passwords through Google Forms
@@ -128,4 +112,24 @@ const InputsContainer = ({
   );
 };
 
-export default InputsContainer;
+InputsContainer.propTypes = {
+  dispatchUpdateInputData: PropTypes.func,
+  fetchedQuestionDataState: PropTypes.array,
+  inputValsState: PropTypes.object,
+  fetchingQuestionDataDoneState: PropTypes.bool
+};
+
+const mapStateToProps = (state) => ({
+  inputValsState: state.surveyQuestion.inputVals,
+  fetchedQuestionDataState: state.surveyQuestion.fetchedQuestionData,
+  fetchingQuestionDataDoneState: state.surveyQuestion.fetchingQuestionDataDone
+
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatchUpdateInputData: (newInputValsObj) => {
+    dispatch(UPDATE_INPUT_VALUE_DATA(newInputValsObj));
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(InputsContainer);
